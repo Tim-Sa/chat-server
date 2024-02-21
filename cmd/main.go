@@ -12,6 +12,7 @@ import (
 	"github.com/fatih/color"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	desc "github.com/Tim-Sa/chat-server/pkg/chat_v1"
 )
@@ -37,6 +38,14 @@ func (s *server) Create(_ context.Context, req *desc.CreateRequest) (*desc.Creat
 	return &desc.CreateResponse{
 		Id: randIndex(),
 	}, nil
+}
+
+func (s *server) Delete(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
+	id := req.GetId()
+	log.Printf("chat %d deleted.", id)
+
+	empty := emptypb.Empty{}
+	return &empty, nil
 }
 
 func main() {
