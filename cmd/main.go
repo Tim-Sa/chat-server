@@ -1,8 +1,12 @@
 package main
 
 import (
+	"context"
+	"crypto/rand"
 	"fmt"
 	"log"
+	"math"
+	"math/big"
 	"net"
 
 	"github.com/fatih/color"
@@ -16,6 +20,23 @@ const grpcPort = 50051
 
 type server struct {
 	desc.UnimplementedChatV1Server
+}
+
+func randIndex() int64 {
+	nBig, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	if err != nil {
+		return 0
+	}
+	return nBig.Int64()
+}
+
+func (s *server) Create(_ context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
+	usernames := req.GetUsernames()
+	log.Printf("chat with %v created.", usernames)
+
+	return &desc.CreateResponse{
+		Id: randIndex(),
+	}, nil
 }
 
 func main() {
