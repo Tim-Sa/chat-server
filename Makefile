@@ -24,3 +24,9 @@ generate-chat-api:
 	--go-grpc_out=pkg/chat_v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
 	api/chat_v1/chat.proto
+
+build:
+	GOOS=linux GOARCH=amd64 go build -o $(LOCAL_BIN)/chat_server_linux cmd/main.go
+
+copy-to-server:
+	scp $(LOCAL_BIN)/chat_server_linux root@91.236.198.158:
