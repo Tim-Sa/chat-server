@@ -33,6 +33,7 @@ func randIndex() int64 {
 
 func (s *server) Create(_ context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
 	usernames := req.GetUsernames()
+
 	log.Printf("chat with %v created.", usernames)
 
 	return &desc.CreateResponse{
@@ -42,7 +43,19 @@ func (s *server) Create(_ context.Context, req *desc.CreateRequest) (*desc.Creat
 
 func (s *server) Delete(_ context.Context, req *desc.DeleteRequest) (*emptypb.Empty, error) {
 	id := req.GetId()
+
 	log.Printf("chat %d deleted.", id)
+
+	empty := emptypb.Empty{}
+	return &empty, nil
+}
+
+func (s *server) SendMessage(_ context.Context, req *desc.SendMessageRequest) (*emptypb.Empty, error) {
+	from := req.GetFrom()
+	text := req.GetText()
+	when := req.GetTimestamp()
+
+	log.Printf("message from %s:\n\n\t %s \n\n at %v\n", from, text, when)
 
 	empty := emptypb.Empty{}
 	return &empty, nil
