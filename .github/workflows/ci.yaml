@@ -16,12 +16,12 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@v3
-      
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      
+
       - name: Login to Docker Registry
         run: docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} $REGISTRY
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and Push Docker Image
         run: |
