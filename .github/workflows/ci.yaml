@@ -1,0 +1,51 @@
+name: Deploy
+
+on: 
+  pull_request:
+    branches: - main
+
+env:
+  REGISTRY: "cr.selcloud.ru/tim-sa"
+  IMAGE-NAME: "chat-server"
+  CONTAINER-NAME: "chat-server-container"
+
+jobs:
+  image-build-and-push:
+    needs: [build-and-test, linter]
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v3
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Login to Docker Registry
+        run: docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} $REGISTRY
+
+      - name: Build and Push Docker Image
+        run: |
+        # уникальный тэг в виде хэша пул реквеста (7 символов)
+          TAG_NAME=$(echo $GITHUB_SHA | head -c7) 
+          docker buildx create --use
+          docker buildx build --no-cache --push --tag $REGISTRY/$IMAGE_NAME:&TAG_NAME -f chat-server/Dockerfile
+
+  deploy-image:
+    runs-on: ubuntu-22.04
+    needs: image-build-and-push
+
+    steps:
+      - name: Deploy to Selectel Cloud via SSH action
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrects.SERVER_HOST }}
+          username: $ {{ secrects.SSH_USERNAME }}
+          key: ${{ secrets.SSHKEY }}
+          envs: IMAGE_NAME, REGISTRY, GITHUB_SHA, CONTAINER_NAME
+          script: |
+            TAG_NAME=$(echo $GITHUB_SHA | head -c7)
+            docker login -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }} $REGISTRY
+            docker stop $CONTAINER_NAME
+            docker rm $CONTAINER_NAME
+            docker run -d -p 50051:50051 --name $CONTAINER_NAME -t $REGISTRY/$IMAGE_NAME:$TAG_NAME
