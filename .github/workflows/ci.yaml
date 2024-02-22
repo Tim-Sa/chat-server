@@ -2,9 +2,9 @@ name: Deploy
 
 on: 
   push:
-    branches: - main
+    branches: [ main, master ]
   pull_request:
-    branches: - main
+    branches: [ main, master ]
 
 env:
   REGISTRY: "cr.selcloud.ru/tim-sa"
@@ -27,7 +27,6 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-        # уникальный тэг в виде хэша пул реквеста (7 символов)
           TAG_NAME=$(echo $GITHUB_SHA | head -c7) 
           docker buildx create --use
           docker buildx build --no-cache --push --tag $REGISTRY/$IMAGE_NAME:&TAG_NAME -f chat-server/Dockerfile
