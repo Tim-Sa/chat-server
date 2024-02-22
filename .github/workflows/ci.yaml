@@ -6,8 +6,8 @@ on:
 
 env:
   REGISTRY: "cr.selcloud.ru/tim-sa"
-  IMAGE-NAME: "chat-server"
-  CONTAINER-NAME: "chat-server-container"
+  IMAGE_NAME: "chat-server"
+  CONTAINER_NAME: "chat-server-container"
 
 jobs:
   image-build-and-push:
@@ -27,7 +27,7 @@ jobs:
         run: |
           TAG_NAME=$(echo $GITHUB_SHA | head -c7)
           docker buildx create --use
-          docker buildx build --no-cache --platform linux/amd64 -t $REGISTRY/$IMAGE-NAME:$TAG_NAME .
+          docker buildx build --no-cache --platform linux/amd64 -t $REGISTRY/$IMAGE_NAME:$TAG_NAME .
 
   deploy-image:
     runs-on: ubuntu-22.04
