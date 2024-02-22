@@ -11,7 +11,6 @@ env:
 
 jobs:
   image-build-and-push:
-    needs: [build-and-test, linter]
     runs-on: ubuntu-22.04
 
     steps:
