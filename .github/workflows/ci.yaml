@@ -1,8 +1,10 @@
 name: Deploy
 
-on: 
+on:
+  push:
+    branches: [ main, master ]
   pull_request:
-    branches: main
+    branches: [ main, master ]
 
 env:
   REGISTRY: "cr.selcloud.ru/tim-sa"
