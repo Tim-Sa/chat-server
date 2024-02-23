@@ -27,8 +27,7 @@ jobs:
         run: |
           TAG_NAME=$(echo $GITHUB_SHA | head -c7)
           docker buildx create --use
-          docker buildx build --no-cache --platform linux/amd64 -t $REGISTRY/$IMAGE_NAME:$TAG_NAME .
-          docker push $REGISTRY/$IMAGE_NAME:$TAG_NAME
+          docker buildx build --no-cache --platform linux/amd64 --push --tag $REGISTRY/$IMAGE_NAME:$TAG_NAME .
 
   deploy-image:
     runs-on: ubuntu-22.04
@@ -43,7 +42,6 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }} 
           key: ${{ secrets.SSHKEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
           envs: IMAGE_NAME, REGISTRY, GITHUB_SHA, CONTAINER_NAME
           script: |
             TAG_NAME=$(echo $GITHUB_SHA | head -c7)
