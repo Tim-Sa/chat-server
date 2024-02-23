@@ -28,11 +28,9 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           TAG_NAME=$(echo $GITHUB_SHA | head -c7)
-          docker buildx create --use
-          # docker buildx build --no-cache --platform linux/amd64 --tag $REGISTRY/$IMAGE_NAME:$TAG_NAME .
-          docker buildx build --no-cache --push --platform linux/amd64 $REGISTRY/$IMAGE_NAME .
-          docker tag $TAG_NAME $REGISTRY/$IMAGE_NAME
-          docker push $REGISTRY/$IMAGE_NAME
+          docker build -t $REGISTRY/$IMAGE_NAME .
+          docker tag $REGISTRY/$IMAGE_NAME:latest $REGISTRY/$IMAGE_NAME:$TAG_NAME
+          docker push $REGISTRY/$IMAGE_NAME:$TAG_NAME
 
   deploy-image:
     runs-on: ubuntu-22.04
